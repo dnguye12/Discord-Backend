@@ -12,7 +12,7 @@ serversRouter.get('/one-by-profile', async (req, res) => {
     }
 
     try {
-        let server = await Server.findOne({ profile: id }).populate('profile')
+        let server = await Server.findOne({ profile: id })
         if (server) {
             return res.status(200).json(server)
         } else {
@@ -32,7 +32,7 @@ serversRouter.get('/all-by-profile', async (req, res) => {
     }
 
     try {
-        let servers = await Server.find({ profile: id }).populate('profile')
+        let servers = await Server.find({ profileId: id })
         if (servers) {
             return res.status(200).json(servers)
         } else {
