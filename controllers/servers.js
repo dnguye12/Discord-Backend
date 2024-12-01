@@ -12,7 +12,15 @@ serversRouter.get('/one-by-profile', async (req, res) => {
     }
 
     try {
-        let server = await Server.findOne({ profile: id })
+        const members = await Member.find({ profileId: id })
+
+        if (!members || members.length === 0) {
+            return res.status(404).json({ error: 'No members found for this profile ID' });
+        }
+
+        const serverIds = members.map(member => member.server);
+        const server = await Server.findOne({ _id: { $in: serverIds } });
+
         if (server) {
             return res.status(200).json(server)
         } else {
@@ -32,7 +40,16 @@ serversRouter.get('/all-by-profile', async (req, res) => {
     }
 
     try {
-        let servers = await Server.find({ profileId: id })
+        const members = await Member.find({ profileId: id })
+
+        if (!members || members.length === 0) {
+            return res.status(404).json({ error: 'No members found for this profile ID' });
+        }
+
+        const serverIds = members.map(member => member.server);
+
+        const servers = await Server.find({ _id: { $in: serverIds } });
+
         if (servers) {
             return res.status(200).json(servers)
         } else {
