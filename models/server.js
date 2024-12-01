@@ -47,4 +47,19 @@ ServerSchema.set('toJSON', {
 
 ServerSchema.plugin(uniqueValidator)
 
+ServerSchema.pre('remove', async function (next) {
+    try {
+        const Channel = mongoose.model('Channel');
+        const Member = mongoose.model('Member');
+
+        await Channel.deleteMany({ _id: { $in: this.channels } });
+
+        await Member.deleteMany({ _id: { $in: this.members } });
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+})
+
 module.exports = mongoose.model('Server', ServerSchema)
