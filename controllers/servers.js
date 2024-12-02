@@ -4,6 +4,26 @@ const Server = require('../models/server')
 const Channel = require('../models/channel')
 const Member = require('../models/member')
 
+serversRouter.get('/', async (req, res) => {
+    let { id } = req.query
+
+    if (!id) {
+        return res.status(400).json('Missing input Server ID')
+    }
+
+    try {
+        let server = await Server.findById(id)
+        if (server) {
+            return res.status(200).json(server)
+        } else {
+            return res.status(200).json({ error: 'Server not found' });
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json('Backend error')
+    }
+})
+
 serversRouter.get('/one-by-profile', async (req, res) => {
     let { id } = req.query
 
