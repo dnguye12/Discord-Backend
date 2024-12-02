@@ -36,8 +36,8 @@ app.use(middleware.requestLogger);
 app.use('/api/profile', profilesRouter)
 app.use('/api/server', serversRouter)
 app.use('/api/upload', uploadRouter)
-app.use('/api/channels', channelsRouter)
-app.use('/api/members', membersRouter)
+app.use('/api/channel', channelsRouter)
+app.use('/api/member', membersRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

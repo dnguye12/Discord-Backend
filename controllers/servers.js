@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const serversRouter = require('express').Router()
 
 const Server = require('../models/server')
@@ -87,6 +89,7 @@ serversRouter.post('/', async (req, res) => {
     const newServer = new Server({
         name,
         imageUrl,
+        inviteCode: uuidv4(),
         profileId
     })
     try {
