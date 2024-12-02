@@ -209,4 +209,41 @@ serversRouter.put('/add-member', async (req, res) => {
     }
 })
 
+serversRouter.put('/update-settings', async (req, res) => {
+    const { id } = req.query
+    const { name, imageUrl } = req.body
+    let helper = false
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id)
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        if (server.name !== name) {
+            server.name = name
+            helper = true
+        }
+
+        if (server.imageUrl !== imageUrl) {
+            server.imageUrl = imageUrl
+            helper = true
+        }
+
+        if (helper) {
+            await server.save()
+        }
+
+        return res.status(201).json(server)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'An error occurred while updating the server' });
+    }
+})
+
 module.exports = serversRouter
