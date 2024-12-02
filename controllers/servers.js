@@ -125,4 +125,88 @@ serversRouter.post('/', async (req, res) => {
     }
 })
 
+serversRouter.put('/invite-code', async (req, res) => {
+    const { id } = req.query
+    const { userId } = req.body
+
+    if (!id) {
+        return res.status(400).json('Missing input Server ID')
+    }
+
+    try {
+        const server = await Server.findById(id)
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        if (server.profileId === userId) {
+            server.inviteCode = uuidv4()
+
+            const updatedServer = await server.save()
+
+            return res.status(200).json(updatedServer)
+        } else {
+            return res.status(404).json("Don't have permission to do this")
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error updating invite code' });
+    }
+})
+
+serversRouter.get('/one-by-invite-code', async (req, res) => {
+    let { invite } = req.query
+
+    if (!invite) {
+        return res.status(400).json('Missing input Invite Code')
+    }
+
+    try {
+        const server = await Server.findOne({ inviteCode: invite }).populate({ path: 'members' })
+
+        if (server) {
+            return res.status(200).json(server)
+        } else {
+            return res.status(200).json({ error: 'No server found' });
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json('Backend error')
+    }
+})
+
+serversRouter.put('/add-member', async (req, res) => {
+    let { id } = req.query
+    const { role, profileId } = req.body
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id)
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        const newMember = new Member({
+            role,
+            profileId,
+            server: id
+        })
+
+        const savedMember = await newMember.save()
+
+        server.members.push(savedMember._id)
+        await server.save()
+
+        return res.status(201).json(server)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'An error occurred while adding the member' });
+    }
+})
+
 module.exports = serversRouter
