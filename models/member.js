@@ -9,7 +9,7 @@ const MemberSchema = new mongoose.Schema({
         enum: roles,
         required: true
     },
-    profileId: {
+    profile: {
         type: String,
         ref: 'Profile'
     },

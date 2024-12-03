@@ -14,7 +14,7 @@ profilesRouter.get('/', async(req, res) => {
         if(profile) {
             return res.status(200).json(profile)
         }else {
-            return res.status(200).json({ error: 'Profile not found' });
+            return res.status(204).json({ error: 'Profile not found' });
         }
     }catch(error) {
         console.log(error)

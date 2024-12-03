@@ -12,7 +12,7 @@ const ChannelSchema = new mongoose.Schema({
         enum: channelType,
         default: 'TEXT'
     },
-    profileId: {
+    profile: {
         type: String,
         ref: 'Profile'
     },

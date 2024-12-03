@@ -12,7 +12,7 @@ const ServerSchema = new mongoose.Schema({
     inviteCode: {
         type: String
     },
-    profileId: {
+    profile: {
         type: String,
         ref: 'Profile'
     },

@@ -5,6 +5,7 @@ const serversRouter = require('express').Router()
 const Server = require('../models/server')
 const Channel = require('../models/channel')
 const Member = require('../models/member')
+const Profile = require('../models/profile')
 
 serversRouter.get('/', async (req, res) => {
     let { id } = req.query
@@ -14,7 +15,7 @@ serversRouter.get('/', async (req, res) => {
     }
 
     try {
-        let server = await Server.findById(id)
+        let server = await Server.findById(id).populate({ path: 'members' })
         if (server) {
             return res.status(200).json(server)
         } else {
@@ -34,7 +35,9 @@ serversRouter.get('/one-by-profile', async (req, res) => {
     }
 
     try {
-        const members = await Member.find({ profileId: id })
+        const helperProfile = await Profile.findById(id)
+
+        const members = await Member.find({ profile: helperProfile.id })
 
         if (!members || members.length === 0) {
             return res.status(404).json({ error: 'No members found for this profile ID' });
@@ -62,7 +65,9 @@ serversRouter.get('/all-by-profile', async (req, res) => {
     }
 
     try {
-        const members = await Member.find({ profileId: id })
+        const helperProfile = await Profile.findById(id)
+
+        const members = await Member.find({ profile: helperProfile.id })
 
         if (!members || members.length === 0) {
             return res.status(404).json({ error: 'No members found for this profile ID' });
@@ -84,21 +89,24 @@ serversRouter.get('/all-by-profile', async (req, res) => {
 })
 
 serversRouter.post('/', async (req, res) => {
-    const { name, imageUrl, profileId } = req.body
-
-    const newServer = new Server({
-        name,
-        imageUrl,
-        inviteCode: uuidv4(),
-        profileId
-    })
+    const { name, imageUrl, profile } = req.body
+    
     try {
+        const helperProfile = await Profile.findById(profile)
+
+        const newServer = new Server({
+            name,
+            imageUrl,
+            inviteCode: uuidv4(),
+            profile: helperProfile.id
+        })
+
         const savedServer = await newServer.save()
 
         const newChannel = new Channel({
             name: 'general',
             type: 'TEXT',
-            profileId,
+            profile: helperProfile.id,
             server: savedServer._id
         })
 
@@ -109,7 +117,7 @@ serversRouter.post('/', async (req, res) => {
 
         const newMember = new Member({
             role: "ADMIN",
-            profileId,
+            profile: helperProfile.id,
             server: savedServer._id
         })
 
@@ -140,7 +148,7 @@ serversRouter.put('/invite-code', async (req, res) => {
             return res.status(404).json({ error: 'Server not found' });
         }
 
-        if (server.profileId === userId) {
+        if (server.profile === userId) {
             server.inviteCode = uuidv4()
 
             const updatedServer = await server.save()
@@ -178,7 +186,7 @@ serversRouter.get('/one-by-invite-code', async (req, res) => {
 
 serversRouter.put('/add-member', async (req, res) => {
     let { id } = req.query
-    const { role, profileId } = req.body
+    const { role, profile } = req.body
 
     if (!id) {
         return res.status(400).json('Missing input Server Id')
@@ -193,7 +201,7 @@ serversRouter.put('/add-member', async (req, res) => {
 
         const newMember = new Member({
             role,
-            profileId,
+            profile,
             server: id
         })
 
