@@ -245,6 +245,40 @@ serversRouter.put('/kick-member', async (req, res) => {
     }
 })
 
+serversRouter.put('/leave-server', async (req, res) => {
+    let { id } = req.query
+    let { profileId } = req.body
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id).populate({ path: "members" })
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        if(server.profile === profileId) {
+            return res.status(404).json({ error: 'ADMIN cannot leave the server' });
+        }
+
+        const helperMember = server.members.find((m) => m.profile === profileId)
+
+        server.members = server.members.filter((m) => m.profile !== profileId)
+
+        await server.save()
+
+        await Member.findByIdAndDelete(helperMember._id)
+
+        return res.status(200).json('Left successfully')
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
 serversRouter.put('/update-settings', async (req, res) => {
     const { id } = req.query
     const { name, imageUrl } = req.body
@@ -282,9 +316,37 @@ serversRouter.put('/update-settings', async (req, res) => {
     }
 })
 
-serversRouter.put('/add-channel', async(req, res) => {
-    const {id} = req.query
-    const {name, type, profile} = req.body
+serversRouter.delete('/delete-server', async(req, res) => {
+    const {id, profileId } = req.query
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id).populate({ path: "members" })
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        if(server.profile !== profileId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        await server.deleteOne()
+
+        return res.status(200).json({ message: 'Server deleted successfully' });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
+serversRouter.put('/add-channel', async (req, res) => {
+    const { id } = req.query
+    const { name, type, profile } = req.body
 
     if (!id) {
         return res.status(400).json('Missing input Server Id')
@@ -297,9 +359,9 @@ serversRouter.put('/add-channel', async(req, res) => {
             return res.status(404).json({ error: 'Server not found' });
         }
 
-        const member = await Member.findOne({profile: profile})
+        const member = await Member.findOne({ profile: profile })
 
-        if(member.role !== 'MODERATOR' && member.role !== 'ADMIN') {
+        if (member.role !== 'MODERATOR' && member.role !== 'ADMIN') {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
@@ -317,7 +379,7 @@ serversRouter.put('/add-channel', async(req, res) => {
         await server.save()
 
         return res.status(200).json(newChannel)
-    }catch (error) {
+    } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'An error occurred while updating the server' });
     }
