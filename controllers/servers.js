@@ -15,7 +15,7 @@ serversRouter.get('/', async (req, res) => {
     }
 
     try {
-        let server = await Server.findById(id).populate({ path: 'members' })
+        let server = await Server.findById(id).populate({ path: 'members' }).populate({ path: 'channels' })
         if (server) {
             return res.status(200).json(server)
         } else {
@@ -277,6 +277,47 @@ serversRouter.put('/update-settings', async (req, res) => {
 
         return res.status(201).json(server)
     } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'An error occurred while updating the server' });
+    }
+})
+
+serversRouter.put('/add-channel', async(req, res) => {
+    const {id} = req.query
+    const {name, type, profile} = req.body
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id)
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        const member = await Member.findOne({profile: profile})
+
+        if(member.role !== 'MODERATOR' && member.role !== 'ADMIN') {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const newChannel = new Channel({
+            name,
+            type,
+            profile,
+            server: server.id
+        })
+
+        const savedChannel = await newChannel.save()
+
+        server.channels.push(savedChannel._id)
+
+        await server.save()
+
+        return res.status(200).json(newChannel)
+    }catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'An error occurred while updating the server' });
     }
