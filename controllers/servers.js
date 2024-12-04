@@ -90,7 +90,7 @@ serversRouter.get('/all-by-profile', async (req, res) => {
 
 serversRouter.post('/', async (req, res) => {
     const { name, imageUrl, profile } = req.body
-    
+
     try {
         const helperProfile = await Profile.findById(profile)
 
@@ -214,6 +214,34 @@ serversRouter.put('/add-member', async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'An error occurred while adding the member' });
+    }
+})
+
+serversRouter.put('/kick-member', async (req, res) => {
+    let { id } = req.query
+    let { memberId } = req.body
+
+    if (!id) {
+        return res.status(400).json('Missing input Server Id')
+    }
+
+    try {
+        const server = await Server.findById(id).populate({ path: "members" })
+
+        if (!server) {
+            return res.status(404).json({ error: 'Server not found' });
+        }
+
+        server.members = server.members.filter((m) => m._id.toString() !== memberId)
+
+        await server.save()
+
+        await Member.findByIdAndDelete(memberId)
+
+        return res.status(200).json('Kicked successfully')
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 })
 
