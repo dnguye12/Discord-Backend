@@ -3,6 +3,27 @@ const channelsRouter = require('express').Router()
 const Channel = require('../models/channel')
 const Server = require('../models/server')
 
+channelsRouter.get('/', async (req, res) => {
+    const { id } = req.query
+
+    if (!id) {
+        return res.status(400).json('Missing input Channel ID')
+    }
+
+    try {
+        const channel = await Channel.findById(id)
+
+        if (!channel) {
+            return res.status(404).json({ error: 'No channel found' });
+        }
+
+        return res.status(200).json(channel)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json('Backend error')
+    }
+})
+
 channelsRouter.put('/', async (req, res) => {
     const { id } = req.query
     const { userId } = req.body
@@ -18,11 +39,11 @@ channelsRouter.put('/', async (req, res) => {
             return res.status(404).json({ error: 'No channel found' });
         }
 
-        const server = await Server.findById(channel.server).populate({path: 'members'})
+        const server = await Server.findById(channel.server).populate({ path: 'members' })
 
         const helperMember = server.members.find((member) => member.profile === userId)
 
-        if(!helperMember || (helperMember.role !== 'ADMIN' && helperMember.role !== "MODERATOR")) {
+        if (!helperMember || (helperMember.role !== 'ADMIN' && helperMember.role !== "MODERATOR")) {
             return res.status(404).json("Unauthorized")
         }
 
@@ -56,9 +77,9 @@ channelsRouter.get('/by-server-id', async (req, res) => {
     }
 })
 
-channelsRouter.put('/edit-name', async(req, res) => {
+channelsRouter.put('/edit-name', async (req, res) => {
     let { id } = req.query
-    let { newName, userId } =req.body
+    let { newName, userId } = req.body
 
     if (!id) {
         return res.status(400).json('Missing input Channel ID')
@@ -71,11 +92,11 @@ channelsRouter.put('/edit-name', async(req, res) => {
             return res.status(404).json({ error: 'No channel found' });
         }
 
-        const server = await Server.findById(channel.server).populate({path: 'members'})
+        const server = await Server.findById(channel.server).populate({ path: 'members' })
 
         const helperMember = server.members.find((member) => member.profile === userId)
 
-        if(!helperMember || (helperMember.role !== 'ADMIN' && helperMember.role !== "MODERATOR")) {
+        if (!helperMember || (helperMember.role !== 'ADMIN' && helperMember.role !== "MODERATOR")) {
             return res.status(404).json("Unauthorized")
         }
 
@@ -84,7 +105,7 @@ channelsRouter.put('/edit-name', async(req, res) => {
         const savedChannel = await channel.save()
 
         return res.status(200).json(savedChannel)
-    }catch(error) {
+    } catch (error) {
         console.log(error)
     }
 })
