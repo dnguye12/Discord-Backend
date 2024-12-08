@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
-const conversation = require('./conversation')
 
 const DirectMessageSchema = new mongoose.Schema({
     content: String,
@@ -36,4 +35,4 @@ DirectMessageSchema.set('toJSON', {
 
 DirectMessageSchema.plugin(uniqueValidator)
 
-module.exports = mongoose.Model('DirectMessage', DirectMessageSchema)
+module.exports = mongoose.model('DirectMessage', DirectMessageSchema)

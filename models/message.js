@@ -35,4 +35,4 @@ MessageSchema.set('toJSON', {
 
 MessageSchema.plugin(uniqueValidator)
 
-module.exports = mongoose.Model('Message', MessageSchema)
+module.exports = mongoose.model('Message', MessageSchema)

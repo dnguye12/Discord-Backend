@@ -9,6 +9,7 @@ const serversRouter = require('./controllers/servers')
 const uploadRouter = require('./controllers/upload')
 const channelsRouter = require('./controllers/channels')
 const membersRouter = require('./controllers/members')
+const conversationsRouter = require('./controllers/conversation')
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -38,6 +39,7 @@ app.use('/api/server', serversRouter)
 app.use('/api/upload', uploadRouter)
 app.use('/api/channel', channelsRouter)
 app.use('/api/member', membersRouter)
+app.use('/api/conversation', conversationsRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

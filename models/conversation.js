@@ -2,13 +2,13 @@ const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const ConversationSchema = new mongoose.Schema({
-    memberOne: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member'
+    profileOne: {
+        type: String,
+        ref: 'Profile'
     },
-    memberTwo: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member'
+    profileTwo: {
+        type: String,
+        ref: 'Profile'
     },
     directMessages: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -44,4 +44,4 @@ ConversationSchema.pre('remove', async function (next) {
     }
 })
 
-module.exports = mongoose.Model('Conversation', ConversationSchema)
+module.exports = mongoose.model('Conversation', ConversationSchema)
