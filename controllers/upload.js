@@ -71,6 +71,36 @@ uploadRouter.get('/files/:filename', async (req, res) => {
     }
 });
 
+uploadRouter.get('/open-files/:filename', async (req, res) => {
+    try {
+        const files = await gfs.find({ filename: req.params.filename }).toArray();
+
+        if (!files || files.length === 0) {
+            return res.status(404).json({ error: 'No files exist' });
+        }
+
+        const file = files[0];
+        const readstream = gfs.openDownloadStreamByName(req.params.filename);
+
+        res.set('Content-Type', file.contentType || 'application/octet-stream');
+        res.set('Content-Disposition', 'inline');
+
+        readstream.on('error', (err) => {
+            console.error('Readstream error:', err);
+            res.status(500).json({ error: 'An error occurred while reading the file' });
+        });
+
+        readstream.on('end', () => {
+            res.end();
+        });
+
+        readstream.pipe(res);
+    } catch (error) {
+        console.error('Error fetching file:', error);
+        res.status(500).json({ error: 'An error occurred while fetching the file' });
+    }
+});
+
 uploadRouter.delete('/files/:filename', async (req, res) => {
     try {
         const file = await gfs.find({ filename: req.params.filename }).toArray();

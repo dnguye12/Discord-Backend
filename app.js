@@ -10,6 +10,8 @@ const uploadRouter = require('./controllers/upload')
 const channelsRouter = require('./controllers/channels')
 const membersRouter = require('./controllers/members')
 const conversationsRouter = require('./controllers/conversation')
+const socketRouter = require('./controllers/socket')
+const messagesRouter = require('./controllers/message')
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -40,6 +42,8 @@ app.use('/api/upload', uploadRouter)
 app.use('/api/channel', channelsRouter)
 app.use('/api/member', membersRouter)
 app.use('/api/conversation', conversationsRouter)
+app.use('/api/socket', socketRouter)
+app.use('/api/message', messagesRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

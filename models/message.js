@@ -15,14 +15,9 @@ const MessageSchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date
-    },
+    }
+}, {
+    timestamps: true 
 })
 
 MessageSchema.set('toJSON', {
