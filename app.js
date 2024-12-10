@@ -12,6 +12,8 @@ const membersRouter = require('./controllers/members')
 const conversationsRouter = require('./controllers/conversation')
 const socketRouter = require('./controllers/socket')
 const messagesRouter = require('./controllers/message')
+const directMessagesRouter = require('./controllers/direct-message')
+const livekitRouter = require('./controllers/livekit')
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -44,6 +46,8 @@ app.use('/api/member', membersRouter)
 app.use('/api/conversation', conversationsRouter)
 app.use('/api/socket', socketRouter)
 app.use('/api/message', messagesRouter)
+app.use('/api/direct-message', directMessagesRouter)
+app.use('/api/livekit', livekitRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

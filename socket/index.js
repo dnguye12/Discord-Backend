@@ -9,7 +9,7 @@ const initSocket = (server) => {
                 origin: "http://localhost:5173",
                 methods: ["GET", "POST"],
             },
-            path: "/api/socket/io/"
+            path: "/api/socket/io"
         })
 
         io.on("connection", (socket) => {

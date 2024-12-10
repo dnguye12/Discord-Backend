@@ -28,7 +28,7 @@ messagesRouter.get('/', async (req, res) => {
         .populate({ path: "member", populate: { path: "profile" } })
         .populate({ path: "channel" });
 
-    const nextCursor = messages.length > 0
+    const nextCursor = messages.length === MESSAGE_BATCH
         ? messages[messages.length - 1].createdAt.toISOString()
         : null;
 
@@ -78,8 +78,8 @@ messagesRouter.patch('/edit-content', async (req, res) => {
     }
 })
 
-messagesRouter.delete('/', async (req, res) => {
-    const {id} = req.query
+messagesRouter.put('/delete', async (req, res) => {
+    const { id } = req.query
 
     if (!id) {
         return res.status(400).json("Can't find message")
@@ -92,10 +92,14 @@ messagesRouter.delete('/', async (req, res) => {
             return res.status(400).json("Can't find message")
         }
 
-        await message.deleteOne()
+        message.content = "This message was deleted."
+        message.fileUrl = ""
+        message.deleted = true
 
-        return res.status(200).json(message)
-    }catch (error) {
+        const updatedMessage = await message.save()
+
+        return res.status(200).json(updatedMessage)
+    } catch (error) {
         console.log(error)
         return res.status(500).json("Internal error")
     }

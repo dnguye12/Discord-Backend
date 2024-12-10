@@ -4,9 +4,9 @@ const uniqueValidator = require('mongoose-unique-validator')
 const DirectMessageSchema = new mongoose.Schema({
     content: String,
     fileUrl: String,
-    member: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member'
+    profile: {
+        type: String,
+        ref: 'Profile'
     },
     conversation: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,14 +15,9 @@ const DirectMessageSchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date
-    },
+    }
+}, {
+    timestamps: true
 })
 
 DirectMessageSchema.set('toJSON', {
