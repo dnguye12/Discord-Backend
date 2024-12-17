@@ -50,10 +50,12 @@ profilesRouter.patch('/status', async (req, res) => {
     }
     try {
         const profile = await Profile.findById(id)
-        profile.online = status
-        if (lastActive) {
-            profile.lastActive = lastActive
+        if (lastActive && new Date(lastActive) > profile.lastActive) {
+            profile.lastActive = lastActive;
+        }else {
+            return res.status(200).json(profile)
         }
+        profile.online = status
 
         const savedProfile = await profile.save()
 
