@@ -4,7 +4,7 @@ const Conversation = require('../models/conversation')
 const Profile = require('../models/profile')
 
 conversationsRouter.post('/', async (req, res) => {
-    const { profileOne, profileTwo } = req.query
+    const { profileOne, profileTwo } = req.body
 
     if (!profileOne || !profileTwo) {
         return res.status(400).json('Missing input')

@@ -1,13 +1,14 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+const onlineType = ['ONL', 'OFF', 'BUSY', 'RED']
+
 const ProfileSchema = new mongoose.Schema({
     _id: {
         type: String
     },
     name: {
-        type: String,
-        required: true
+        type: String
     },
     imageUrl: {
         type: String
@@ -16,24 +17,14 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
-    servers: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Server'
-        }
-    ],
-    members: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Member'
-        }
-    ],
-    channels: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Channel'
-        }
-    ],
+    online: {
+        type: String,
+        enum: onlineType,
+        default: 'OFF'
+    },
+    lastActive: {
+        type: Date
+    },
     createdAt: {
         type: Date,
         default: Date.now

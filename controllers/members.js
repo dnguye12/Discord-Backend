@@ -2,6 +2,22 @@ const membersRouter = require('express').Router()
 
 const Member = require('../models/member')
 
+membersRouter.get('/', async(req, res) => {
+    let { id } = req.query
+
+    if (!id) {
+        return res.status(400).json('Missing input ID')
+    }
+
+    try {
+        const member = await Member.findById(id).populate({path: 'profile'})
+        return res.status(200).json(member)
+    }catch(error) {
+        console.log(error)
+        return res.status(500).json('Internal error')
+    }
+})
+
 membersRouter.get('/by-server-id', async (req, res) => {
     let { id } = req.query
 
