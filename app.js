@@ -3,6 +3,7 @@ const config = require("./utils/config");
 require("express-async-errors");
 const app = express();
 const cors = require("cors");
+const path = require("path");
 
 const profilesRouter = require('./controllers/profiles')
 const serversRouter = require('./controllers/servers')
@@ -39,6 +40,8 @@ app.use(express.static("dist"));
 app.use(express.json());
 app.use(middleware.requestLogger);
 
+app.use(express.static(path.join(__dirname, "dist")));
+
 app.use('/api/profile', profilesRouter)
 app.use('/api/server', serversRouter)
 app.use('/api/upload', uploadRouter)
@@ -50,6 +53,10 @@ app.use('/api/message', messagesRouter)
 app.use('/api/direct-message', directMessagesRouter)
 app.use('/api/livekit', livekitRouter)
 app.use('/api/server-stats', serverStatsRouter)
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

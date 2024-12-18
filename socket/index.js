@@ -1,4 +1,5 @@
 const { Server } = require('socket.io')
+const config = require('../utils/config')
 
 let io
 
@@ -6,7 +7,7 @@ const initSocket = (server) => {
     if (!io) {
         io = new Server(server, {
             cors: {
-                origin: "http://localhost:5173",
+                origin: `${config.FRONTEND}`,
                 methods: ["GET", "POST"],
             },
             path: "/api/socket/io"
