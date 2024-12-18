@@ -121,9 +121,9 @@ const seedDatabase = async () => {
     try {
 
         // Generate fake data
-        const profiles = await generateProfiles(10);
-        const servers = await generateServers(profiles, 2);
-        const channels = await generateChannels(servers, 1);
+        const profiles = await generateProfiles(100);
+        const servers = await generateServers(profiles, 3);
+        const channels = await generateChannels(servers, 3);
         const members = await generateMembers(servers, profiles);
         await generateMessages(channels, members);
 
