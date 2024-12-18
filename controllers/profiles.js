@@ -53,6 +53,11 @@ profilesRouter.patch('/status', async (req, res) => {
         if (lastActive && new Date(lastActive) >= profile.lastActive) {
             profile.lastActive = lastActive;
         }else {
+            if(profile.online === 'OFF' && status === 'ONL') {
+                profile.online = status
+                const savedProfile = await profile.save()
+                return res.status(200).json(savedProfile)
+            }
             return res.status(200).json(profile)
         }
         profile.online = status

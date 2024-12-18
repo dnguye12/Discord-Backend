@@ -3,6 +3,7 @@ const channelsRouter = require('express').Router()
 const Channel = require('../models/channel')
 const Server = require('../models/server')
 
+//Get a channel by id
 channelsRouter.get('/', async (req, res) => {
     const { id } = req.query
 
@@ -24,6 +25,8 @@ channelsRouter.get('/', async (req, res) => {
     }
 })
 
+//delete a channel using its id 
+//need to supply userId of the person calling this, the channel is only deleted if the userId is a member is either ADMIN or MODERATOR 
 channelsRouter.put('/', async (req, res) => {
     const { id } = req.query
     const { userId } = req.body
@@ -60,6 +63,7 @@ channelsRouter.put('/', async (req, res) => {
     }
 })
 
+//return all channels from a server
 channelsRouter.get('/by-server-id', async (req, res) => {
     let { id } = req.query
 
@@ -77,6 +81,7 @@ channelsRouter.get('/by-server-id', async (req, res) => {
     }
 })
 
+//update the name of a channel
 channelsRouter.put('/edit-name', async (req, res) => {
     let { id } = req.query
     let { newName, userId } = req.body

@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+//Load from .env files
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3001

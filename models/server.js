@@ -6,22 +6,27 @@ const ServerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    //the image to represent the server
     imageUrl: {
         type: String
     },
+    //invite code to the server, avoid people knowing the server id to just join
     inviteCode: {
         type: String
     },
+    //profile id of the person creating this server
     profile: {
         type: String,
         ref: 'Profile'
     },
+    //list of members
     members: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Member'
         }
     ],
+    //list of channels
     channels: [
         {
             type: mongoose.Schema.Types.ObjectId,

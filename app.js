@@ -5,6 +5,7 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 
+//all the routers
 const profilesRouter = require('./controllers/profiles')
 const serversRouter = require('./controllers/servers')
 const uploadRouter = require('./controllers/upload')
@@ -20,6 +21,7 @@ const serverStatsRouter = require('./controllers/server-stats')
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 
+//connect to mongoose database
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
@@ -40,8 +42,10 @@ app.use(express.static("dist"));
 app.use(express.json());
 app.use(middleware.requestLogger);
 
+//divide url for frontend and backend
 app.use(express.static(path.join(__dirname, "dist")));
 
+//backend only listen to these url
 app.use('/api/profile', profilesRouter)
 app.use('/api/server', serversRouter)
 app.use('/api/upload', uploadRouter)

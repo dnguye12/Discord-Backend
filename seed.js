@@ -10,6 +10,8 @@ const Profile = require('./models/profile');
 const Member = require('./models/member');
 const Message = require('./models/message');
 
+//Using faker js to create fake data for the database.
+
 mongoose
     .connect(config.MONGODB_URI)
     .then(() => {

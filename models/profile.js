@@ -1,15 +1,17 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
-const onlineType = ['ONL', 'OFF', 'BUSY', 'RED']
+const onlineType = ['ONL', 'OFF']
 
 const ProfileSchema = new mongoose.Schema({
+    //Use a string to sync with Clerk 
     _id: {
         type: String
     },
     name: {
         type: String
     },
+    //the profile picture
     imageUrl: {
         type: String
     },

@@ -1,3 +1,5 @@
+//Set up socket io for backend
+
 const { Server } = require('socket.io')
 const config = require('../utils/config')
 
